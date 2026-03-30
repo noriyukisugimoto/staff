@@ -4,15 +4,15 @@
 
 ## 1. GitHub にコードを置く
 
-プロジェクトルートで（未初期化なら）:
+リポジトリは初期化済み（`git init` と初回コミット済み）です。未連携なら GitHub で空リポジトリを作成し:
 
 ```bash
-git init
-git add .
-git commit -m "Initial commit"
+git remote add origin https://github.com/YOUR_USER/YOUR_REPO.git
+git branch -M main
+git push -u origin main
 ```
 
-GitHub で空リポジトリを作成し、表示されたコマンドで `remote` を追加して `push` してください。
+（`YOUR_USER/YOUR_REPO` は置き換え。初回のみ GitHub の認証が必要です。）
 
 ## 2. Neon で PostgreSQL を用意
 
