@@ -1,13 +1,11 @@
 "use client";
 
-import type { Route } from "next";
 import { toSameOriginPath } from "@/lib/auth-redirect";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/tasks";
 
@@ -34,9 +32,12 @@ function LoginForm() {
       return;
     }
 
-    const target = toSameOriginPath(result?.url ?? callbackUrl, window.location.origin);
-    router.push(target as Route);
-    router.refresh();
+    let target = toSameOriginPath(result?.url ?? callbackUrl, window.location.origin);
+    if (!target.startsWith("/") || target.startsWith("/api/auth")) {
+      target = "/tasks";
+    }
+    // router.push だとセッション Cookie がサーバーに届く前に RSC が走り、本文だけ 404 になることがある
+    window.location.assign(target);
   }
 
   return (
