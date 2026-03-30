@@ -12,6 +12,9 @@ const credentialsSchema = z.object({
 });
 
 export const authConfig = {
+  /** Next.js の Route Handler は `/api/auth/*`。環境変数の URL 解釈で `/` になり Bad request になるのを防ぐ */
+  basePath: "/api/auth",
+  trustHost: true,
   session: { strategy: "jwt" },
   providers: [
     CredentialsProvider({
