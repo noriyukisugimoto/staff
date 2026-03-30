@@ -1,0 +1,218 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+enum Role {
+
+  STAFF
+
+  ADMIN
+
+}
+
+
+
+enum TaskStatus {
+
+  TODO
+
+  IN_PROGRESS
+
+  DONE
+
+}
+
+
+
+enum TaskPriority {
+
+  LOW
+
+  MEDIUM
+
+  HIGH
+
+}
+
+
+
+model User {
+
+  id               String          @id @default(cuid())
+
+  loginId          String          @unique
+
+  name             String?
+
+  department       String?
+
+  passwordHash     String
+
+  role             Role            @default(STAFF)
+
+  accounts         Account[]
+
+  sessions         Session[]
+
+  taskAssignments  TaskAssignee[]
+
+  histories        TaskHistory[]   @relation("TaskHistoryActor")
+
+  createdAt        DateTime        @default(now())
+
+  updatedAt        DateTime        @updatedAt
+
+}
+
+
+
+model Task {
+
+  id          String         @id @default(cuid())
+
+  title       String
+
+  description String?
+
+  status      TaskStatus     @default(TODO)
+
+  priority    TaskPriority   @default(MEDIUM)
+
+  dueDate     DateTime?
+
+  archivedAt  DateTime?
+
+  assignments TaskAssignee[]
+
+  histories   TaskHistory[]
+
+  createdAt   DateTime       @default(now())
+
+  updatedAt   DateTime       @updatedAt
+
+}
+
+
+
+/// タスクごとに最大3人まで（アプリ層でも検証）
+
+model TaskAssignee {
+
+  id        String @id @default(cuid())
+
+  taskId    String
+
+  userId    String
+
+  sortOrder Int    @default(0)
+
+  task      Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+
+  @@unique([taskId, userId])
+
+  @@index([taskId])
+
+}
+
+
+
+model TaskHistory {
+
+  id          String       @id @default(cuid())
+
+  taskId      String
+
+  task        Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  changedById String
+
+  changedBy   User         @relation("TaskHistoryActor", fields: [changedById], references: [id], onDelete: Cascade)
+
+  fromStatus  TaskStatus?
+
+  toStatus    TaskStatus
+
+  changedAt   DateTime     @default(now())
+
+}
+
+
+
+model Account {
+
+  userId            String
+
+  type              String
+
+  provider          String
+
+  providerAccountId String
+
+  refresh_token     String?
+
+  access_token      String?
+
+  expires_at        Int?
+
+  token_type        String?
+
+  scope             String?
+
+  id_token          String?
+
+  session_state     String?
+
+
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+
+  @@id([provider, providerAccountId])
+
+}
+
+
+
+model Session {
+
+  sessionToken String   @unique
+
+  userId       String
+
+  expires      DateTime
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+}
+
+
+
+model VerificationToken {
+
+  identifier String
+
+  token      String   @unique
+
+  expires    DateTime
+
+
+
+  @@id([identifier, token])
+
+}
+
+
