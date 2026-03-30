@@ -32,12 +32,12 @@ function LoginForm() {
       return;
     }
 
-    let target = toSameOriginPath(result?.url ?? callbackUrl, window.location.origin);
+    // result.url は Auth 内部の絶対 URL になり得り、ここで使うと本文だけ 404 になることがある
+    let target = toSameOriginPath(callbackUrl, window.location.origin);
     if (!target.startsWith("/") || target.startsWith("/api/auth")) {
       target = "/tasks";
     }
-    // router.push だとセッション Cookie がサーバーに届く前に RSC が走り、本文だけ 404 になることがある
-    window.location.assign(target);
+    window.location.replace(target);
   }
 
   return (

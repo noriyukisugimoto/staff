@@ -12,10 +12,20 @@ export function Header() {
       <div className="row" style={{ justifyContent: "space-between" }}>
         <div className="row">
           <strong>スタッフ進捗共有</strong>
-          <Link href="/tasks">タスク一覧</Link>
-          <Link href="/overview">全体ビュー</Link>
-          {isAdmin ? <Link href="/admin/users">ユーザー管理</Link> : null}
-          <Link href="/settings">設定</Link>
+          <Link href="/tasks" prefetch={false}>
+            タスク一覧
+          </Link>
+          <Link href="/overview" prefetch={false}>
+            全体ビュー
+          </Link>
+          {isAdmin ? (
+            <Link href="/admin/users" prefetch={false}>
+              ユーザー管理
+            </Link>
+          ) : null}
+          <Link href="/settings" prefetch={false}>
+            設定
+          </Link>
         </div>
         <div className="row">
           <span className="muted">{session ? `ID: ${session.user.loginId}` : "未ログイン"}</span>
@@ -30,7 +40,9 @@ export function Header() {
               ログアウト
             </button>
           ) : (
-            <Link href="/login">ログイン</Link>
+            <Link href="/login" prefetch={false}>
+              ログイン
+            </Link>
           )}
         </div>
       </div>

@@ -305,7 +305,9 @@ export function TaskListClient({ initialTasks, users, isAdmin }: Props) {
               <article key={task.id} className="card">
                 <div className="row" style={{ justifyContent: "space-between" }}>
                   <strong>{task.title}</strong>
-                  <Link href={`/tasks/${task.id}`}>詳細</Link>
+                  <Link href={`/tasks/${task.id}`} prefetch={false}>
+                    詳細
+                  </Link>
                 </div>
                 <p className="muted">{task.description || "説明なし"}</p>
                 <div className="row">

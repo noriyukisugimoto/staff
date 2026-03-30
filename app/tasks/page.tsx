@@ -4,6 +4,8 @@ import { TaskListClient } from "@/components/task-list-client";
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 
+export const dynamic = "force-dynamic";
+
 export default async function TasksPage() {
   const session = await requireSession();
   if (!session) {
