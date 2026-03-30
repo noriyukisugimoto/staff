@@ -20,7 +20,13 @@ export function Header() {
         <div className="row">
           <span className="muted">{session ? `ID: ${session.user.loginId}` : "未ログイン"}</span>
           {session ? (
-            <button type="button" onClick={() => signOut({ callbackUrl: "/login" })}>
+            <button
+              type="button"
+              onClick={async () => {
+                await signOut({ redirect: false });
+                window.location.assign(`${window.location.origin}/login`);
+              }}
+            >
               ログアウト
             </button>
           ) : (
