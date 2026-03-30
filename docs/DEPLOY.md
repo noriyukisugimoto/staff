@@ -1,5 +1,21 @@
 # 本番デプロイ（Vercel + PostgreSQL / Neon）
 
+## インターネットで使えるようにする（やることの順番）
+
+1. [Vercel](https://vercel.com) にログインする（GitHub アカウントで続行可）。
+2. **Add New… → Project** で **Import Git Repository** から **`noriyukisugimoto/staff`**（このリポジトリ）を選ぶ。
+3. **Configure Project** の画面で **Environment Variables** を開き、次を追加する（値は自分のものに置き換え）。
+   - `DATABASE_URL` — Neon の接続文字列（ローカルの `.env` と同じでよい）
+   - `NEXTAUTH_SECRET` — ローカルと別でもよい、**長いランダムな文字列**
+   - `NEXTAUTH_URL` — まだ URL が分からなければ、いったん `https://placeholder.vercel.app` のように仮でもよい（後で直す）
+4. **Deploy** を押して初回デプロイを待つ。
+5. デプロイ完了後に表示される **本番 URL**（`https://xxxx.vercel.app`）をコピーする。
+6. Vercel の **Settings → Environment Variables** で **`NEXTAUTH_URL`** を、その **本番 URL**（`https` から始まる、そのまま）に**書き換え**、**Save** したあと **Deployments** から **Redeploy** する。
+
+これでブラウザからその URL にアクセスできるようになります。ログインはローカルと同じユーザー（DB を共有している場合）で試せます。
+
+---
+
 最短ルートの手順です。`prisma/migrations` 内の SQL は SQLite 向けのため、**PostgreSQL では `prisma migrate deploy` は使わず**、スキーマは [`prisma/schema.prisma`](../prisma/schema.prisma) を正として `db push` で同期します。
 
 ## 1. GitHub にコードを置く
